@@ -7,14 +7,16 @@ import { Comment } from './Comment'
 import styles from './Post.module.css'
 
 export function Post({ author, content, publishedAt }) {
-  const [newCommentText, setNewCommentText] = useState('')
   const [comments, setComments] = useState(['Post muito bacana, hein?!'])
+  const [newCommentText, setNewCommentText] = useState('')
+  const isNewCommentEmpty = newCommentText.length === 0
 
   const publishedDateFormated = format(
     publishedAt,
     "d 'de' LLLL 'ás' HH:mm'h'",
     ptBR
   )
+
   const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
     locale: ptBR,
     addSuffix: true,
@@ -40,7 +42,19 @@ export function Post({ author, content, publishedAt }) {
   }
 
   const handleNewCommentChange = () => {
+    event.target.setCustomValidity('')
     setNewCommentText(event.target.value)
+  }
+
+  const handlerNewCommentInvalid = () => {
+    event.target.setCustomValidity('Esse campo é obrigatorio')
+  }
+
+  const deleteComment = (commentTodelete) => {
+    const commentsWithoutDeltedOne = comments.filter(
+      (comment) => comment !== commentTodelete
+    )
+    setComments(commentsWithoutDeltedOne)
   }
 
   return (
@@ -70,15 +84,23 @@ export function Post({ author, content, publishedAt }) {
           name="comment"
           onChange={handleNewCommentChange}
           value={newCommentText}
+          onInvalid={handlerNewCommentInvalid}
+          required
         />
         <footer>
-          <button type="submit">Publicar</button>
+          <button type="submit" disabled={isNewCommentEmpty}>
+            Publicar
+          </button>
         </footer>
       </form>
 
       <div className={styles.commentList}>
         {comments.map((comment) => (
-          <Comment key={comment} content={comment} />
+          <Comment
+            key={comment}
+            content={comment}
+            onDeleteComment={deleteComment}
+          />
         ))}
       </div>
     </article>
