@@ -5,11 +5,11 @@ interface AvatarProps extends ImgHTMLAttributes<HTMLImageElement> {
   hasBorder?: boolean
 }
 
-export function Avatar({ hasBorder = true, ...rest }: AvatarProps) {
+export function Avatar({ hasBorder = true, ...props }: AvatarProps) {
   return (
     <img
-    className={hasBorder ? styles.avatarWithBorder : styles.avatar}
-    {...rest}
+      className={hasBorder ? styles.avatarWithBorder : styles.avatar}
+      {...props}
     />
   )
 }
